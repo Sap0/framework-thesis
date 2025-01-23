@@ -10,23 +10,59 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
+    - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Log in to Azure
+    - name: Login to Azure
       uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-    - name: Terraform Configuration
+    - name: Check and create Azure resources if needed
+      run: |
+        RESOURCE_GROUP="${{ secrets.TF_RESOURCE_GROUP }}"
+        STORAGE_ACCOUNT="${{ secrets.TF_STORAGE_ACCOUNT }}"
+        CONTAINER_NAME="tfstate"
+
+        echo "Verifying Resource Group: $RESOURCE_GROUP"
+        if ! az group show --name $RESOURCE_GROUP &>/dev/null; then
+          echo "Resource Group does not exist. Creating..."
+          az group create --name $RESOURCE_GROUP --location "East US"
+        else
+          echo "Resource Group exists."
+        fi
+
+        echo "Verifying Storage Account: $STORAGE_ACCOUNT"
+        if ! az storage account show --name $STORAGE_ACCOUNT --resource-group $RESOURCE_GROUP &>/dev/null; then
+          echo "Storage Account does not exist. Creating..."
+          az storage account create --name $STORAGE_ACCOUNT --resource-group $RESOURCE_GROUP --sku Standard_LRS
+        else
+          echo "Storage Account exists."
+        fi
+
+        echo "Verifying Storage Container: $CONTAINER_NAME"
+        if ! az storage container show --name $CONTAINER_NAME --account-name $STORAGE_ACCOUNT &>/dev/null; then
+          echo "Storage Container does not exist. Creating..."
+          az storage container create --name $CONTAINER_NAME --account-name $STORAGE_ACCOUNT
+        else
+          echo "Storage Container exists."
+        fi
+
+        # Recupero della chiave di accesso per il backend Terraform
+        STORAGE_KEY=$(az storage account keys list --account-name $STORAGE_ACCOUNT --query '[0].value' --output tsv)
+
+        echo "TF_STORAGE_KEY=$STORAGE_KEY" >> $GITHUB_ENV
+
+    - name: Terraform Init
       run: |
         terraform init \
           -backend-config="resource_group_name=${{ secrets.TF_RESOURCE_GROUP }}" \
           -backend-config="storage_account_name=${{ secrets.TF_STORAGE_ACCOUNT }}" \
           -backend-config="container_name=tfstate" \
-          -backend-config="key=terraform.tfstate"
+          -backend-config="key=terraform.tfstate" \
+          -backend-config="access_key=$TF_STORAGE_KEY"
 
-    - name: Terraform plan
+    - name: Terraform Plan
       run: terraform plan -out=tfplan
 
     - name: Terraform Apply
