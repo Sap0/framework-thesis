@@ -23,6 +23,9 @@ jobs:
         RESOURCE_GROUP="${{ secrets.TF_RESOURCE_GROUP }}"
         STORAGE_ACCOUNT="${{ secrets.TF_STORAGE_ACCOUNT }}"
         CONTAINER_NAME="tfstate"
+        
+        echo "TF_RESOURCE_GROUP=$RESOURCE_GROUP" >> $GITHUB_ENV
+        echo "TF_STORAGE_ACCOUNT=$STORAGE_ACCOUNT" >> $GITHUB_ENV
 
         echo "Verifying Resource Group: $RESOURCE_GROUP"
         if ! az group show --name $RESOURCE_GROUP &>/dev/null; then
