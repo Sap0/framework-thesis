@@ -33,3 +33,5 @@ Turn it like this:
 }
 
 Add the json result as a secret in the github repository called AZURE_CREDENTIALS
+
+Create a Github PAT TOKEN and store it as a secret called PAT_TOKEN
