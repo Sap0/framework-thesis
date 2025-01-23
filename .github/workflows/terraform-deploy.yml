@@ -1,0 +1,33 @@
+name: Terraform Deployment
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Log in to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Terraform Configuration
+      run: |
+        terraform init \
+          -backend-config="resource_group_name=${{ secrets.TF_RESOURCE_GROUP }}" \
+          -backend-config="storage_account_name=${{ secrets.TF_STORAGE_ACCOUNT }}" \
+          -backend-config="container_name=tfstate" \
+          -backend-config="key=terraform.tfstate"
+
+    - name: Terraform plan
+      run: terraform plan -out=tfplan
+
+    - name: Terraform Apply
+      run: terraform apply -auto-approve tfplan
