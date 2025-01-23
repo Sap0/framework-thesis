@@ -8,4 +8,28 @@ az login
 
 az ad sp create-for-rbac --name myServicePrincipalName1 --role contributor --scopes /subscriptions/<subscription-id>
 
+It will generate a json like this:
+
+{
+  "appId": "************",
+  "displayName": ""************",
+  "password": "************",
+  "tenant": "************"
+}
+
+These values map to the Terraform variables like so:
+
+appId is the client_id defined above.
+password is the client_secret defined above.
+tenant is the tenant_id defined above.
+
+Turn it like this:
+
+{
+    "clientSecret":  "<password>",
+    "subscriptionId":  "<subscription-id>",
+    "tenantId":  "<tenant>",
+    "clientId":  "<app-id>"
+}
+
 Add the json result as a secret in the github repository called AZURE_CREDENTIALS
