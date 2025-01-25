@@ -54,6 +54,9 @@ jobs:
           STORAGE_KEY=$(az storage account keys list --account-name $STORAGE_ACCOUNT --query '[0].value' --output tsv)
 
           echo "TF_STORAGE_KEY=$STORAGE_KEY" >> $GITHUB_ENV
+      
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
 
       - name: Terraform Init
         run: |
