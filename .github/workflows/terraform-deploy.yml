@@ -58,8 +58,8 @@ jobs:
       - name: Terraform Init
         run: |
           terraform init \
-            -backend-config="resource_group_name=resource-group-states" \
-            -backend-config="storage_account_name=storage-account-states" \
+            -backend-config="resource_group_name=$TF_RESOURCE_GROUP" \
+            -backend-config="storage_account_name=$TF_STORAGE_ACCOUNT" \
             -backend-config="container_name=tfstate" \
             -backend-config="key=terraform.tfstate" \
             -backend-config="access_key=$TF_STORAGE_KEY"
