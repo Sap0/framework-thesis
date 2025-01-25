@@ -21,7 +21,7 @@ jobs:
       - name: Check and create Azure resources if needed
         run: |
           RESOURCE_GROUP="resource-group-states"
-          STORAGE_ACCOUNT="storage-account-states"
+          STORAGE_ACCOUNT="storageaccountstates"
           CONTAINER_NAME="tfstate"
 
           echo "TF_RESOURCE_GROUP=$RESOURCE_GROUP" >> $GITHUB_ENV
