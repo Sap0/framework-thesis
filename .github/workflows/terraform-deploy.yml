@@ -18,68 +18,10 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Check if resourcegroup for states exists and set it if empty
-        env:
-          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
-          SECRET_NAME: "TF_RESOURCE_GROUP"
-          SECRET_VALUE: "resourcegroupstates"
-        run: |
-          response=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
-                          -H "Accept: application/vnd.github.v3+json" \
-                          "https://api.github.com/repos/${{ github.repository }}/actions/secrets/$SECRET_NAME")
-
-          if echo "$response" | grep -q "Not Found"; then
-            echo "Secret $SECRET_NAME does not exist. Creating it now."
-            secret_exists=false
-          else
-            echo "Secret $SECRET_NAME exists. Checking if empty..."
-            secret_exists=true
-          fi
-
-          if [ "$secret_exists" = false ] || [ -z "$(echo "$response" | jq -r '.value')" ]; then
-            echo "Updating secret $SECRET_NAME with default value."
-            encrypted_value=$(echo -n "$SECRET_VALUE" | base64)
-            curl -X PUT -H "Authorization: token $GITHUB_TOKEN" \
-                -H "Accept: application/vnd.github.v3+json" \
-                https://api.github.com/repos/${{ github.repository }}/actions/secrets/$SECRET_NAME \
-                -d "{\"encrypted_value\":\"$encrypted_value\",\"visibility\":\"all\"}"
-          else
-            echo "Secret $SECRET_NAME already set."
-          fi
-          
-      - name: Check if storageaccount for states exists and set it if empty
-        env:
-            GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
-            SECRET_NAME: "TF_STORAGE_ACCOUNT"
-            SECRET_VALUE: "storageaccountstates"
-        run: |
-            response=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
-                            -H "Accept: application/vnd.github.v3+json" \
-                            "https://api.github.com/repos/${{ github.repository }}/actions/secrets/$SECRET_NAME")
-  
-            if echo "$response" | grep -q "Not Found"; then
-              echo "Secret $SECRET_NAME does not exist. Creating it now."
-              secret_exists=false
-            else
-              echo "Secret $SECRET_NAME exists. Checking if empty..."
-              secret_exists=true
-            fi
-  
-            if [ "$secret_exists" = false ] || [ -z "$(echo "$response" | jq -r '.value')" ]; then
-              echo "Updating secret $SECRET_NAME with default value."
-              encrypted_value=$(echo -n "$SECRET_VALUE" | base64)
-              curl -X PUT -H "Authorization: token $GITHUB_TOKEN" \
-                  -H "Accept: application/vnd.github.v3+json" \
-                  https://api.github.com/repos/${{ github.repository }}/actions/secrets/$SECRET_NAME \
-                  -d "{\"encrypted_value\":\"$encrypted_value\",\"visibility\":\"all\"}"
-            else
-              echo "Secret $SECRET_NAME already set."
-            fi
-
       - name: Check and create Azure resources if needed
         run: |
-          RESOURCE_GROUP="${{ secrets.TF_RESOURCE_GROUP }}"
-          STORAGE_ACCOUNT="${{ secrets.TF_STORAGE_ACCOUNT }}"
+          RESOURCE_GROUP="resource-group-states"
+          STORAGE_ACCOUNT="storage-account-states"
           CONTAINER_NAME="tfstate"
 
           echo "TF_RESOURCE_GROUP=$RESOURCE_GROUP" >> $GITHUB_ENV
@@ -116,8 +58,8 @@ jobs:
       - name: Terraform Init
         run: |
           terraform init \
-            -backend-config="resource_group_name=${{ secrets.TF_RESOURCE_GROUP }}" \
-            -backend-config="storage_account_name=${{ secrets.TF_STORAGE_ACCOUNT }}" \
+            -backend-config="resource_group_name=resource-group-states" \
+            -backend-config="storage_account_name=storage-account-states" \
             -backend-config="container_name=tfstate" \
             -backend-config="key=terraform.tfstate" \
             -backend-config="access_key=$TF_STORAGE_KEY"
