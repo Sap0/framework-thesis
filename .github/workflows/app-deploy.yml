@@ -1,0 +1,34 @@
+name: Deploy to AKS
+
+on:
+  workflow_run:
+    workflows: ["Terraform Deployment"]
+    types:
+      - completed  # Runs only when the first workflow is completed
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./application
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Build and Push Docker image # to automate
+      run: |
+        az acr login --name acrsalvatoreleonardi 
+        docker build -t acrsalvatoreleonardi.azurecr.io/my-app:${{ github.sha }} .
+        docker push acrsalvatoreleonardi.azurecr.io/my-app:${{ github.sha }}
+
+    - name: Deploy to AKS
+      run: |
+        az aks get-credentials --resource-group myResourceGroup --name myAKSCluster
+        kubectl apply -f deployment.yaml
