@@ -31,4 +31,4 @@ jobs:
     - name: Deploy to AKS
       run: |
         az aks get-credentials --resource-group myResourceGroup --name myAKSCluster
-        kubectl apply -f deployment.yaml
+        kubectl apply -f ./kubernetes/deployment.yaml

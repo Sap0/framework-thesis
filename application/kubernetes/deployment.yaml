@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: my-app
-        image: myacr.azurecr.io/my-app:v1
+        image: acrsalvatoreleonardi.azurecr.io/my-app:v1 # to automate
         ports:
         - containerPort: 8080
 ---
