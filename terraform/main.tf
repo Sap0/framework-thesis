@@ -37,7 +37,7 @@ resource "azurerm_user_assigned_identity" "aks_identity" {
 
 # Role assignments to allow aks to pull image from acr
 resource "azurerm_role_assignment" "aks_network" {
-  scope                = azurerm_resource_group.acr.id
+  scope                = azurerm_resource_group.rg.id
   role_definition_name = "Network Contributor"
   principal_id         = azurerm_user_assigned_identity.aks_identity.principal_id
 }
