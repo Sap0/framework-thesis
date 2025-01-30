@@ -6,7 +6,7 @@ Install the azure cli
 Get an azure subscription and generate a service principal to create resources
 az login
 
-az ad sp create-for-rbac --name myServicePrincipalName1 --role contributor --scopes /subscriptions/<subscription-id>
+az ad sp create-for-rbac --name myServicePrincipalNameOwner --role owner --scopes /subscriptions/<subscription-id>
 
 It will generate a json like this:
 
