@@ -25,6 +25,7 @@ resource "azurerm_container_registry" "acr" {
   location            = azurerm_resource_group.rg.location
   sku                 = "Basic"
   admin_enabled       = true
+  anonymous_pull_enabled = true
 }
 
 # AKS cluster creation
