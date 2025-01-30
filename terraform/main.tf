@@ -28,6 +28,13 @@ resource "azurerm_container_registry" "acr" {
   anonymous_pull_enabled = true
 }
 
+# Create AKS identity
+resource "azurerm_user_assigned_identity" "aks_identity" {
+  name                = "aks-identity"
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+}
+
 # AKS cluster creation
 resource "azurerm_kubernetes_cluster" "aks" {
   name                = var.aks_name
@@ -47,7 +54,8 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
 
   identity {
-    type = "SystemAssigned"
+    type         = "UserAssigned"
+    identity_ids = [azurerm_user_assigned_identity.aks_identity.id]
   }
 
   tags = {
@@ -56,12 +64,12 @@ resource "azurerm_kubernetes_cluster" "aks" {
 }
 
 # Role assignment to allow aks to pull image from acr
-resource "azurerm_role_assignment" "acr_pull_role_assignment" {
-  principal_id                     = azurerm_kubernetes_cluster.aks.kubelet_identity[0].object_id
-  role_definition_name             = "AcrPull"
-  scope                            = azurerm_container_registry.acr.id
-  skip_service_principal_aad_check = true
+resource "azurerm_role_assignment" "aks_acr_pull" {
+  scope                = azurerm_container_registry.acr.id
+  role_definition_name = "AcrPull"
+  principal_id         = azurerm_user_assigned_identity.aks_identity.principal_id
 }
+
 
 # Output of the credentials to access kubernetes
 output "kube_config" {
