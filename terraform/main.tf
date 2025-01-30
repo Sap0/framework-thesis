@@ -35,12 +35,26 @@ resource "azurerm_user_assigned_identity" "aks_identity" {
   location            = azurerm_resource_group.rg.location
 }
 
+# Role assignments to allow aks to pull image from acr
+resource "azurerm_role_assignment" "aks_network" {
+  scope                = azurerm_resource_group.acr.id
+  role_definition_name = "Network Contributor"
+  principal_id         = azurerm_user_assigned_identity.aks.principal_id
+}
+
+resource "azurerm_role_assignment" "aks_acr" {
+  scope                = azurerm_container_registry.acr.id
+  role_definition_name = "AcrPull"
+  principal_id         = azurerm_user_assigned_identity.aks.principal_id
+}
+
 # AKS cluster creation
 resource "azurerm_kubernetes_cluster" "aks" {
   name                = var.aks_name
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   dns_prefix          = var.aks_dns_prefix
+  role_based_access_control_enabled = true
 
   default_node_pool {
     name       = "default"
@@ -61,14 +75,10 @@ resource "azurerm_kubernetes_cluster" "aks" {
   tags = {
     environment = "dev"
   }
+
+  depends_on = [azurerm_role_assignment.aks_network, azurerm_role_assignment.aks_acr]
 }
 
-# Role assignment to allow aks to pull image from acr
-resource "azurerm_role_assignment" "aks_acr_pull" {
-  scope                = azurerm_container_registry.acr.id
-  role_definition_name = "AcrPull"
-  principal_id         = azurerm_user_assigned_identity.aks_identity.principal_id
-}
 
 
 # Output of the credentials to access kubernetes
