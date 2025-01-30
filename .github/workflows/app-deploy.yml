@@ -22,11 +22,11 @@ jobs:
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-    - name: Build and Push Docker image # to automate
+    - name: Build and Push Docker image # to automate acrname and image version
       run: |
         az acr login --name acrsalvatoreleonardi 
-        docker build -t acrsalvatoreleonardi.azurecr.io/my-app:${{ github.sha }} .
-        docker push acrsalvatoreleonardi.azurecr.io/my-app:${{ github.sha }}
+        docker build -t acrsalvatoreleonardi.azurecr.io/my-app:v1 . 
+        docker push acrsalvatoreleonardi.azurecr.io/my-app:v1
 
     - name: Deploy to AKS
       run: |
