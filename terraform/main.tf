@@ -12,13 +12,13 @@ terraform {
   }
 }
 
-# Creazione del Resource Group
+# Resource Group creation
 resource "azurerm_resource_group" "rg" {
   name     = var.resource_group_name
   location = var.location
 }
 
-# Creazione di un Azure Container Registry (ACR)
+# Azure Container Registry creation
 resource "azurerm_container_registry" "acr" {
   name                = var.acr_name
   resource_group_name = azurerm_resource_group.rg.name
@@ -27,7 +27,7 @@ resource "azurerm_container_registry" "acr" {
   admin_enabled       = true
 }
 
-# Creazione del cluster AKS
+# AKS cluster creation
 resource "azurerm_kubernetes_cluster" "aks" {
   name                = var.aks_name
   location            = azurerm_resource_group.rg.location
@@ -49,7 +49,15 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
 }
 
-# Output delle credenziali di accesso per il cluster AKS
+# Role assignment to allow aks to pull image from acr
+resource "azurerm_role_assignment" "acr_pull_role_assignment" {
+  principal_id                     = azurerm_kubernetes_cluster.aks.kubelet_identity[0].object_id
+  role_definition_name             = "AcrPull"
+  scope                            = azurerm_container_registry.acr.id
+  skip_service_principal_aad_check = true
+}
+
+# Output of the credentials to access kubernetes
 output "kube_config" {
   value = azurerm_kubernetes_cluster.aks.kube_config_raw
   sensitive = true
