@@ -87,7 +87,7 @@ jobs:
           echo "ACR_NAME is '$ACR_NAME'"
           echo "ACR_NAME=$ACR_NAME" >> $GITHUB_ENV
         
-      - name: Change directory, Build and Push Docker image
+      - name: Build and Push Docker image
         run: |
           cd ../application
           az acr login --name $ACR_NAME 
@@ -95,8 +95,9 @@ jobs:
           docker build -t $IMAGE_NAME .
           docker push $IMAGE_NAME
       
-      - name: Deploy to AKS
+      - name: Deploy to AKS using Helm
         run: |
           cd ../application
           az aks get-credentials --resource-group myResourceGroup --name myAKSCluster
-          kubectl apply -f ./kubernetes/deployment.yaml
+          helm upgrade --install myapp . --set image.repository=$ACR_NAME.azurecr.io/myapp --set image.tag=latest
+
