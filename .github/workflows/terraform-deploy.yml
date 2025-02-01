@@ -83,6 +83,7 @@ jobs:
         run: |
           ACR_NAME=$(terraform output -raw acr_name | tr -d '\r' | tr -d '\n')
           echo "ACR_NAME=$ACR_NAME" >> $GITHUB_ENV
+          echo "ACR_NAME is '$ACR_NAME'"
       
       - name: Change directory, Build and Push Docker image
         run: |
