@@ -8,17 +8,6 @@ variable "location" {
   default     = "East US"
 }
 
-resource "random_string" "acr_suffix" {
-  length  = 8
-  special = false
-  upper   = false
-}
-
-variable "acr_name" {
-  description = "Container Registry Name"
-  default     = "acr${random_string.acr_suffix.result}"
-}
-
 variable "aks_name" {
   description = "AKS Cluster name"
   default     = "myAKSCluster"
