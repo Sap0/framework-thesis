@@ -81,7 +81,7 @@ jobs:
       
       - name: Get ACR Name
         run: |
-          ACR_NAME=$(terraform output -raw acr_name)
+          ACR_NAME=$(terraform output -json acr_name | jq -r '.[0]')
           echo "ACR_NAME=$ACR_NAME" >> $GITHUB_ENV
           echo "ACR_NAME is '$ACR_NAME'"
       
