@@ -87,7 +87,6 @@ jobs:
           echo "ACR_NAME is '$ACR_NAME'"
           echo "ACR_NAME=$ACR_NAME" >> $GITHUB_ENV
         
-      
       - name: Change directory, Build and Push Docker image
         run: |
           cd ../application
@@ -98,5 +97,6 @@ jobs:
       
       - name: Deploy to AKS
         run: |
+          cd ../application
           az aks get-credentials --resource-group myResourceGroup --name myAKSCluster
           kubectl apply -f ./kubernetes/deployment.yaml
