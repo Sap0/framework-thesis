@@ -30,3 +30,4 @@ spec:
     targetPort: 8080
   selector:
     app: my-app
+    
