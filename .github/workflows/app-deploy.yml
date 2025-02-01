@@ -25,8 +25,8 @@ jobs:
     - name: Build and Push Docker image # to automate acrname and image version
       run: |
         az acr login --name acrsalvatoreleonardi 
-        docker build -t acrsalvatoreleonardi.azurecr.io/my-app:v1 . 
-        docker push acrsalvatoreleonardi.azurecr.io/my-app:v1
+        docker build -t acrsalvatoreleonardi.azurecr.io/my-app:latest . 
+        docker push acrsalvatoreleonardi.azurecr.io/my-app:latest
 
     - name: Deploy to AKS
       run: |
