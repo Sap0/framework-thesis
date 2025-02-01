@@ -1,6 +1,6 @@
 provider "azurerm" {
   features {}
-  subscription_id = "dc689f67-6b1e-4c7c-990a-7651be51e9e8" # to automate
+  # subscription_id = "dc689f67-6b1e-4c7c-990a-7651be51e9e8" # to automate
 }
 
 terraform {
@@ -78,8 +78,6 @@ resource "azurerm_kubernetes_cluster" "aks" {
 
   depends_on = [azurerm_role_assignment.aks_network, azurerm_role_assignment.aks_acr]
 }
-
-
 
 # Output of the credentials to access kubernetes
 output "kube_config" {
