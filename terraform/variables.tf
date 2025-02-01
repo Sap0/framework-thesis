@@ -1,29 +1,35 @@
 variable "resource_group_name" {
-  description = "Il nome del resource group"
+  description = "Resource Group Name"
   default     = "myResourceGroup"
 }
 
 variable "location" {
-  description = "La regione Azure in cui creare le risorse"
+  description = "Azure Region"
   default     = "East US"
 }
 
+resource "random_string" "acr_suffix" {
+  length  = 8
+  special = false
+  upper   = false
+}
+
 variable "acr_name" {
-  description = "Nome del container registry"
-  default     = "myacrname"
+  description = "Container Registry Name"
+  default     = "acr${random_string.acr_suffix.result}"
 }
 
 variable "aks_name" {
-  description = "Nome del cluster AKS"
+  description = "AKS Cluster name"
   default     = "myAKSCluster"
 }
 
 variable "aks_dns_prefix" {
-  description = "Prefisso DNS per il cluster AKS"
+  description = "AKS Cluster DNS Prefix"
   default     = "myaks"
 }
 
 variable "node_count" {
-  description = "Numero di nodi nel cluster AKS"
-  default     = 2
+  description = "AKS cluster node counts"
+  default     = 1
 }

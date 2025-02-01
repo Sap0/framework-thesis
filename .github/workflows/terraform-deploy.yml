@@ -78,3 +78,19 @@ jobs:
 
       - name: Terraform Apply
         run: terraform apply -auto-approve tfplan
+      
+      - name: Get ACR Name
+        run: echo "ACR_NAME=$(terraform output -raw acr_name)" >> $GITHUB_ENV
+      
+      - name: Change directory, Build and Push Docker image
+        run: |
+          cd ../application
+          az acr login --name $ACR_NAME 
+          IMAGE_NAME="$ACR_NAME.azurecr.io/myapp:latest"
+          docker build -t $IMAGE_NAME .
+          docker push $IMAGE_NAME
+      
+      - name: Deploy to AKS
+        run: |
+          az aks get-credentials --resource-group myResourceGroup --name myAKSCluster
+          kubectl apply -f ./kubernetes/deployment.yaml
