@@ -1,2 +1,4 @@
 AZURE_CREDENTIALS
 AZURE_CREDENTIALS_2
+.terraform/
+.terraform.lock.hcl

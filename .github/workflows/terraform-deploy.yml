@@ -59,7 +59,9 @@ jobs:
           echo "TF_STORAGE_KEY=$STORAGE_KEY" >> $GITHUB_ENV
       
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false # mandatory to terraform output the values correctly
 
       - name: Set Subscription ID
         run: echo "ARM_SUBSCRIPTION_ID=$(az account show --query id -o tsv)" >> $GITHUB_ENV
@@ -81,10 +83,10 @@ jobs:
       
       - name: Get ACR Name
         run: |
-          terraform output -raw acr_name
-          #ACR_NAME=$(terraform output -raw acr_name)
-          #echo "ACR_NAME is '$ACR_NAME'"
-          # echo "ACR_NAME=$ACR_NAME" >> $GITHUB_ENV
+          ACR_NAME=$(terraform output -raw acr_name)
+          echo "ACR_NAME is '$ACR_NAME'"
+          echo "ACR_NAME=$ACR_NAME" >> $GITHUB_ENV
+        
       
       - name: Change directory, Build and Push Docker image
         run: |
