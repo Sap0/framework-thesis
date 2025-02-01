@@ -80,7 +80,9 @@ jobs:
         run: terraform apply -auto-approve tfplan
       
       - name: Get ACR Name
-        run: echo "ACR_NAME=$(terraform output -raw acr_name)" >> $GITHUB_ENV
+        run: |
+          ACR_NAME=$(terraform output -raw acr_name | tr -d '\r' | tr -d '\n')
+          echo "ACR_NAME=$ACR_NAME" >> $GITHUB_ENV
       
       - name: Change directory, Build and Push Docker image
         run: |
