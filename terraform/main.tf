@@ -27,7 +27,6 @@ resource "azurerm_container_registry" "acr" {
   location            = azurerm_resource_group.rg.location
   sku                 = "Standard"
   admin_enabled       = true
-  anonymous_pull_enabled = true
 }
 
 # Create AKS identity
@@ -50,6 +49,12 @@ resource "azurerm_role_assignment" "aks_acr" {
   principal_id         = azurerm_user_assigned_identity.aks_identity.principal_id
 }
 
+resource "azurerm_role_assignment" "aks_acr_manage_id" {
+  scope                = azurerm_user_assigned_identity.aks_identity.id
+  role_definition_name = "Managed Identity Operator"
+  principal_id         = azurerm_user_assigned_identity.aks_identity.principal_id
+}
+
 # AKS cluster creation
 resource "azurerm_kubernetes_cluster" "aks" {
   name                = var.aks_name
@@ -67,6 +72,12 @@ resource "azurerm_kubernetes_cluster" "aks" {
   network_profile {
     network_plugin    = "azure"
     load_balancer_sku = "standard"
+  }
+
+  kubelet_identity {
+    object_id                 = azurerm_user_assigned_identity.aks_identity.principal_id
+    client_id                 = azurerm_user_assigned_identity.aks_identity.client_id
+    user_assigned_identity_id = azurerm_user_assigned_identity.aks_identity.id
   }
 
   identity {
