@@ -1,12 +1,3 @@
-terraform {
-  backend "azurerm" {
-    resource_group_name  = "myResourceGroup"
-    storage_account_name = "mystorageaccount"
-    container_name       = "tfstate"
-    key                  = "terraform.tfstate"
-  }
-}
-
 # Resource Group creation
 resource "azurerm_resource_group" "rg" {
   name     = var.resource_group_name
