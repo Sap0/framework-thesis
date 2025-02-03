@@ -1,37 +1,63 @@
 # framework-thesis
-Develop a framework based on infrastructure as code for developing scalable microservices in cloud environment using container orchestration based technologies
 
-Install the azure cli
+## Overview
+This project provides a framework based on Infrastructure as Code (IaC) for developing scalable microservices in a cloud environment using container orchestration technologies. The framework leverages Azure, Kubernetes, and GitHub Actions to automate the deployment and management of cloud resources.
 
-Get an azure subscription and generate a service principal to create resources
+## Prerequisites
+Before setting up the framework, ensure you have the following:
+- An [Azure subscription](https://azure.microsoft.com/en-us/free/)
+- The [Azure CLI](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli) installed on your local machine
+- A [GitHub account](https://github.com/)
+
+## Setup Instructions
+### 1. Install Azure CLI
+Ensure you have Azure CLI installed. If not, install it by following the official guide [here](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli).
+
+### 2. Authenticate with Azure
+Login to your Azure account:
+```sh
 az login
+```
 
+### 3. Create a Service Principal
+Generate a Service Principal to create and manage resources:
+```sh
 az ad sp create-for-rbac --name myServicePrincipalNameOwner --role owner --scopes /subscriptions/<subscription-id>
-
-It will generate a json like this:
-
+```
+This command will generate a JSON output similar to the following:
+```json
 {
   "appId": "************",
-  "displayName": ""************",
+  "displayName": "************",
   "password": "************",
   "tenant": "************"
 }
+```
 
-These values map to the Terraform variables like so:
-
-appId is the client_id defined above.
-password is the client_secret defined above.
-tenant is the tenant_id defined above.
-
-Turn it like this:
-
+### 4. Map Azure Credentials to Terraform Variables
+The values from the generated JSON should be mapped to Terraform variables as follows:
+```json
 {
     "clientSecret":  "<password>",
     "subscriptionId":  "<subscription-id>",
     "tenantId":  "<tenant>",
     "clientId":  "<app-id>"
 }
+```
 
-Add the json result as a secret in the github repository called AZURE_CREDENTIALS
+### 5. Add Azure Credentials as a GitHub Secret
+Store the generated JSON as a secret in your GitHub repository:
+1. Navigate to your repository on GitHub.
+2. Go to **Settings** > **Secrets and variables** > **Actions**.
+3. Click **New repository secret**.
+4. Name the secret `AZURE_CREDENTIALS`.
+5. Paste the JSON content and save it.
 
-Create a Github PAT TOKEN and store it as a secret called PAT_TOKEN
+### 6. Create a GitHub PAT Token
+A GitHub Personal Access Token (PAT) is required for repository authentication:
+1. Go to [GitHub Personal Access Tokens](https://github.com/settings/tokens).
+2. Generate a new token with the required scopes.
+3. Store the token as a secret in your repository:
+   - **Secret name**: `PAT_TOKEN`
+   - **Secret value**: Your generated token
+
