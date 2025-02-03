@@ -61,3 +61,8 @@ A GitHub Personal Access Token (PAT) is required for repository authentication:
    - **Secret name**: `PAT_TOKEN`
    - **Secret value**: Your generated token
 
+## Next Steps
+Once the setup is complete, every time you push to the `main` branch, a GitHub Action will be triggered to:
+- Deploy an Azure Kubernetes Service (AKS) cluster using Terraform
+- Build a Docker image and push it to a container registry
+- Deploy a Kubernetes application to the cluster, making it accessible
