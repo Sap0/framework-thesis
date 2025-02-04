@@ -87,17 +87,31 @@ jobs:
           echo "ACR_NAME is '$ACR_NAME'"
           echo "ACR_NAME=$ACR_NAME" >> $GITHUB_ENV
         
-      - name: Build and Push Docker image
+      - name: Build and Push Frontend
         run: |
-          cd ../application
+          cd ../frontend
           az acr login --name $ACR_NAME 
-          IMAGE_NAME="$ACR_NAME.azurecr.io/myapp:latest"
+          IMAGE_NAME="$ACR_NAME.azurecr.io/todo-frontend:latest"
           docker build -t $IMAGE_NAME .
           docker push $IMAGE_NAME
       
-      - name: Deploy to AKS using Helm
+      - name: Deploy Frontend to AKS using Helm
         run: |
-          cd ../application
+          cd ../frontend
           az aks get-credentials --resource-group myResourceGroup --name myAKSCluster
-          helm upgrade --install myapp . --set image.repository=$ACR_NAME.azurecr.io/myapp --set image.tag=latest
+          helm upgrade --install todo-frontend . --set image.repository=$ACR_NAME.azurecr.io/todo-frontend --set image.tag=latest
+
+      - name: Build and Push Backend
+        run: |
+          cd ../backend
+          az acr login --name $ACR_NAME 
+          IMAGE_NAME="$ACR_NAME.azurecr.io/todo-backend:latest"
+          docker build -t $IMAGE_NAME .
+          docker push $IMAGE_NAME
+      
+      - name: Deploy Backend to AKS using Helm
+        run: |
+          cd ../backend
+          az aks get-credentials --resource-group myResourceGroup --name myAKSCluster
+          helm upgrade --install todo-backend . --set image.repository=$ACR_NAME.azurecr.io/todo-backend --set image.tag=latest
 
