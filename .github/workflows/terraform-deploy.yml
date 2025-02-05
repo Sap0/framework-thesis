@@ -83,6 +83,7 @@ jobs:
 
       - name: Installing Ingress Controller to AKS using Helm
         run: |
+          az aks get-credentials --resource-group myResourceGroup --name myAKSCluster
           helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
           helm repo update
           helm install my-ingress ingress-nginx/ingress-nginx
