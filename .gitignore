@@ -3,3 +3,4 @@ AZURE_CREDENTIALS_2
 .terraform/
 .terraform.lock.hcl
 .venv/
+busybox.yaml
