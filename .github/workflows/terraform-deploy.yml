@@ -104,7 +104,7 @@ jobs:
       
       - name: Deploy Frontend to AKS using Helm
         run: |
-          cd ../frontend
+          cd ../frontend/charts
           az aks get-credentials --resource-group myResourceGroup --name myAKSCluster
           helm upgrade --install todo-frontend . --set image.repository=$ACR_NAME.azurecr.io/todo-frontend --set image.tag=latest
 
@@ -118,7 +118,7 @@ jobs:
       
       - name: Deploy Backend to AKS using Helm
         run: |
-          cd ../backend
+          cd ../backend/charts
           az aks get-credentials --resource-group myResourceGroup --name myAKSCluster
           helm upgrade --install todo-backend . --set image.repository=$ACR_NAME.azurecr.io/todo-backend --set image.tag=latest
 
