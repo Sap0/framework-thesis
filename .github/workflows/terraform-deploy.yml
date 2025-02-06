@@ -89,9 +89,10 @@ jobs:
 
           if helm ls | grep -q my-ingress; then
               echo "Helm release 'my-ingress' is already present."
+              helm upgrade my-ingress ingress-nginx/ingress-nginx --set controller.service.annotations."service\.beta\.kubernetes\.io/azure-load-balancer-health-probe-request-path"=/healthz --set controller.service.externalTrafficPolicy=Local
           else
               echo "Helm release 'my-ingress' is not present. Installing..."
-              helm install my-ingress ingress-nginx/ingress-nginx
+              helm install my-ingress ingress-nginx/ingress-nginx --set controller.service.annotations."service\.beta\.kubernetes\.io/azure-load-balancer-health-probe-request-path"=/healthz --set controller.service.externalTrafficPolicy=Local
           fi
       
       - name: Get ACR Name
