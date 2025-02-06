@@ -86,15 +86,8 @@ jobs:
           az aks get-credentials --resource-group myResourceGroup --name myAKSCluster
           helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
           helm repo update
-
-          if helm ls | grep -q my-ingress; then
-              echo "Helm release 'my-ingress' is already present."
-              helm upgrade my-ingress ingress-nginx/ingress-nginx --set controller.service.annotations."service\.beta\.kubernetes\.io/azure-load-balancer-health-probe-request-path"=/healthz --set controller.service.externalTrafficPolicy=Local
-          else
-              echo "Helm release 'my-ingress' is not present. Installing..."
-              helm install my-ingress ingress-nginx/ingress-nginx --set controller.service.annotations."service\.beta\.kubernetes\.io/azure-load-balancer-health-probe-request-path"=/healthz --set controller.service.externalTrafficPolicy=Local
-          fi
-      
+          helm upgrade --install my-ingress ingress-nginx/ingress-nginx --set controller.service.annotations."service\.beta\.kubernetes\.io/azure-load-balancer-health-probe-request-path"=/healthz --set controller.service.externalTrafficPolicy=Local
+          
       - name: Get ACR Name
         run: |
           ACR_NAME=$(terraform output -raw acr_name)
