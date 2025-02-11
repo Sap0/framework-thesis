@@ -1,5 +1,5 @@
 {
-    "name": "todo-backend",
+    "name": "todo-list-backend",
     "version": "1.0.0",
     "description": "Simple todo list backend",
     "main": "server.js",

@@ -98,7 +98,7 @@ jobs:
         run: |
           cd ../frontend
           az acr login --name $ACR_NAME 
-          IMAGE_NAME="$ACR_NAME.azurecr.io/todo-frontend:latest"
+          IMAGE_NAME="$ACR_NAME.azurecr.io/todo-list-frontend:latest"
           docker build -t $IMAGE_NAME .
           docker push $IMAGE_NAME
       
@@ -106,13 +106,13 @@ jobs:
         run: |
           cd ../frontend/charts
           az aks get-credentials --resource-group myResourceGroup --name myAKSCluster
-          helm upgrade --install todo-frontend . --set image.repository=$ACR_NAME.azurecr.io/todo-frontend --set image.tag=latest
+          helm upgrade --install todo-list-frontend . --set image.repository=$ACR_NAME.azurecr.io/todo-list-frontend --set image.tag=latest
 
       - name: Build and Push Backend
         run: |
           cd ../backend
           az acr login --name $ACR_NAME 
-          IMAGE_NAME="$ACR_NAME.azurecr.io/todo-backend:latest"
+          IMAGE_NAME="$ACR_NAME.azurecr.io/todo-list-backend:latest"
           docker build -t $IMAGE_NAME .
           docker push $IMAGE_NAME
       
@@ -120,5 +120,5 @@ jobs:
         run: |
           cd ../backend/charts
           az aks get-credentials --resource-group myResourceGroup --name myAKSCluster
-          helm upgrade --install todo-backend . --set image.repository=$ACR_NAME.azurecr.io/todo-backend --set image.tag=latest
+          helm upgrade --install todo-list-backend . --set image.repository=$ACR_NAME.azurecr.io/todo-list-backend --set image.tag=latest
 

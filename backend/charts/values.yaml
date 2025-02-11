@@ -1,4 +1,4 @@
-# Default values for todo-backend.
+# Default values for todo-list-backend.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
@@ -7,7 +7,7 @@ replicaCount: 1
 
 # This sets the container image more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
 image:
-  repository: "your-acr-name.azurecr.io/todo-backend"
+  repository: "your-acr-name.azurecr.io/todo-list-backend"
   tag: "latest"
 
 # This is for setting up a service more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/

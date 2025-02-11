@@ -64,5 +64,7 @@ A GitHub Personal Access Token (PAT) is required for repository authentication:
 ## Next Steps
 Once the setup is complete, every time you push to the `main` branch, a GitHub Action will be triggered to:
 - Deploy an Azure Kubernetes Service (AKS) cluster using Terraform
-- Build a Docker image and push it to a container registry
-- Deploy a Kubernetes application to the cluster, making it accessible
+- Install an Nginx Ingress Controller to Kubernetes cluster using Helm
+- Build a Frontend Docker image and push it to a container registry
+- Build a Backend Docker image and push it to a container registry
+- Deploy a Kubernetes application made of the two images previously built to the cluster, making it accessible from the internet
