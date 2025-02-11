@@ -68,3 +68,8 @@ Once the setup is complete, every time you push to the `main` branch, a GitHub A
 - Build a Frontend Docker image and push it to a container registry
 - Build a Backend Docker image and push it to a container registry
 - Deploy a Kubernetes application made of the two images previously built to the cluster, making it accessible from the internet
+
+## For this example
+
+Commit something and navigate to ``http://frontend.local`` to see the result. 
+(Be sure to add the public ip address of the ingress controller to your local hostfile)
