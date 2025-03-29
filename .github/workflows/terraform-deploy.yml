@@ -121,6 +121,3 @@ jobs:
           cd ../backend/charts
           az aks get-credentials --resource-group myResourceGroup --name myAKSCluster
           helm upgrade --install todo-list-backend . --set image.repository=$ACR_NAME.azurecr.io/todo-list-backend --set image.tag=latest
-
-          
-
